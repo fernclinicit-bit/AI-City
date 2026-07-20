@@ -3,68 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated AI City Projection</title>
+    <title>AI City - Advanced Holographic Interface</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Blurred Background Cityscape -->
-    <div class="bg-city"></div>
-    <div class="bg-overlay"></div>
-
-    <!-- 3D Perspective Scene -->
-    <div class="scene" id="scene">
-        <!-- Phone Device Frame -->
-        <div class="phone">
-            <!-- Screen Content (Background, Clipped) -->
-            <div class="screen">
-                <div class="grid-base"></div>
-                <!-- Screen Reflections/Gloss -->
-                <div class="screen-gloss"></div>
-            </div>
-            
-            <!-- 3D City Container (Unclipped, Popping out in 3D) -->
-            <div class="city-container">
-                <!-- Central Tower -->
-                <div class="building central-tower" data-height="12">
-                    <div class="face front"></div>
-                    <div class="face back"></div>
-                    <div class="face right"></div>
-                    <div class="face left"></div>
-                    <div class="face top">
-                        <div class="spire"></div>
-                    </div>
-                </div>
-                
-                <!-- Other Buildings -->
-                <div class="building b1" data-height="5"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                <div class="building b2" data-height="7"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                <div class="building b3" data-height="4"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                <div class="building b4" data-height="6"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                <div class="building b5" data-height="3"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                <div class="building b6" data-height="8"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                <div class="building b7" data-height="4"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                
-                <!-- Data Streams / Circuit Lines / Workers -->
-                <div class="data-streams"></div>
-            </div>
-            
-            <!-- Phone Edge / Bezel -->
-            <div class="phone-edge top"></div>
-            <div class="phone-edge bottom"></div>
-            <div class="phone-edge left"></div>
-            <div class="phone-edge right"></div>
-        </div>
+    <div class="parallax-wrapper">
         
-        <!-- Hand representation (stylized silhouette) -->
-        <div class="hand-silhouette"></div>
+        <!-- Deep Space / Sky -->
+        <div class="layer sky" data-speed="0.02"></div>
+
+        <!-- Far Background City (Silhouettes) -->
+        <div class="layer bg-city" data-speed="0.1">
+            <div class="buildings-bg"></div>
+        </div>
+
+        <!-- Midground City (Detailed glowing skyscrapers) -->
+        <div class="layer mid-city" data-speed="0.25">
+            <div class="buildings-mid"></div>
+            <!-- Huge glowing holograms -->
+            <div class="hologram-circle"></div>
+        </div>
+
+        <!-- The Glowing Water/River -->
+        <div class="layer water" data-speed="0.3"></div>
+
+        <!-- Foreground Bridge System (Where AI walks) -->
+        <div class="layer bridge-layer" data-speed="0.5">
+            <div class="bridge-structure"></div>
+            
+            <!-- AI Worker Terminals -->
+            <div class="terminal t1"></div>
+            <div class="terminal t2"></div>
+            <div class="terminal t3"></div>
+        </div>
+
+        <!-- AI Workers Layer -->
+        <div class="layer workers-layer" data-speed="0.6">
+            <div id="workers-container"></div>
+        </div>
+
+        <!-- Overlay / HUD -->
+        <div class="hud-overlay" data-speed="0.0">
+            <div class="hud-header">
+                <h1>AI.CORP <span>NEURAL NETWORK</span></h1>
+                <p>Status: <span class="status-ok">OPTIMAL</span> | Active Units: <span id="unit-count">0</span></p>
+            </div>
+            
+            <div class="hud-corner bottom-left"></div>
+            <div class="hud-corner bottom-right"></div>
+            <div class="hud-corner top-right"></div>
+        </div>
     </div>
 
-    <!-- UI Overlay for context -->
-    <div class="ui-overlay">
-        <h1>AI CITY <span>PROJECTION</span></h1>
-        <p>Holographic Neural Interface Active</p>
-    </div>
+    <!-- Hidden SVG Template for AI Worker (Humanoid with Headset) -->
+    <svg id="robot-template" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 200" style="display:none;">
+        <defs>
+            <linearGradient id="metal" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#a0aab5;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="neon-cyan" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#00f0ff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#0080ff;stop-opacity:1" />
+            </linearGradient>
+            <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+        
+        <g class="robot-body-group">
+            <!-- Body/Torso -->
+            <path d="M 30,70 Q 50,60 70,70 L 80,120 Q 50,140 20,120 Z" fill="url(#metal)" stroke="#333" stroke-width="2"/>
+            <path d="M 40,80 L 60,80 L 65,110 L 35,110 Z" fill="#1a1a24"/>
+            <!-- Glowing Chest Core -->
+            <circle cx="50" cy="95" r="8" fill="url(#neon-cyan)" filter="url(#glow)"/>
+            
+            <!-- Left Arm -->
+            <path d="M 25,75 Q 10,90 15,120" fill="none" stroke="url(#metal)" stroke-width="8" stroke-linecap="round"/>
+            <circle cx="15" cy="120" r="5" fill="#444"/> <!-- Hand -->
+            
+            <!-- Right Arm -->
+            <path d="M 75,75 Q 90,90 85,120" fill="none" stroke="url(#metal)" stroke-width="8" stroke-linecap="round"/>
+            <circle cx="85" cy="120" r="5" fill="#444"/> <!-- Hand -->
+            
+            <!-- Legs (simplified for walking animation via CSS) -->
+            <g class="leg left-leg">
+                <path d="M 35,125 L 35,180" fill="none" stroke="url(#metal)" stroke-width="10" stroke-linecap="round"/>
+                <path d="M 25,180 L 45,180" fill="#333" stroke="#222" stroke-width="4" stroke-linecap="round"/> <!-- Foot -->
+            </g>
+            <g class="leg right-leg">
+                <path d="M 65,125 L 65,180" fill="none" stroke="url(#metal)" stroke-width="10" stroke-linecap="round"/>
+                <path d="M 55,180 L 75,180" fill="#333" stroke="#222" stroke-width="4" stroke-linecap="round"/> <!-- Foot -->
+            </g>
+            
+            <!-- Head -->
+            <path d="M 35,55 Q 50,20 65,55 L 60,65 L 40,65 Z" fill="url(#metal)" stroke="#333" stroke-width="2"/>
+            <!-- Eyes (Visor) -->
+            <rect x="42" y="45" width="16" height="6" rx="3" fill="#00f0ff" filter="url(#glow)"/>
+            
+            <!-- Headset -->
+            <path d="M 30,45 A 25 25 0 0 1 70 45" fill="none" stroke="#222" stroke-width="4"/>
+            <circle cx="28" cy="48" r="7" fill="#111" stroke="#00f0ff" stroke-width="1"/>
+            <circle cx="72" cy="48" r="7" fill="#111" stroke="#00f0ff" stroke-width="1"/>
+            <path d="M 72,48 L 85,55" fill="none" stroke="#222" stroke-width="3"/> <!-- Mic -->
+            <circle cx="85" cy="55" r="3" fill="#ff0055" filter="url(#glow)"/>
+        </g>
+    </svg>
 
     <script src="script.js"></script>
 </body>
