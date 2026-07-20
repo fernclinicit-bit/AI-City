@@ -54,6 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const svgClone = template.cloneNode(true);
         svgClone.removeAttribute('id');
         svgClone.style.display = 'block';
+        svgClone.setAttribute('width', '100%');
+        svgClone.setAttribute('height', '100%');
 
         const bot = document.createElement('div');
         bot.classList.add('ai-worker', 'walking');
