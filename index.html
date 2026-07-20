@@ -5,41 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart City AI Applications</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Background Clouds -->
+    <!-- Background -->
     <div class="clouds"></div>
 
+    <!-- Header & Logo -->
     <div class="header">
         <h1>Smart City AI Applications</h1>
+    </div>
+    <div class="logo">
+        <svg viewBox="0 0 100 40" width="100" height="40">
+            <!-- Simple iapp logo approximation -->
+            <text x="10" y="30" font-family="Inter" font-weight="900" font-size="28" fill="#ff0055">i</text>
+            <text x="25" y="30" font-family="Inter" font-weight="900" font-size="28" fill="#123e75">app</text>
+            <circle cx="15" cy="8" r="4" fill="#00f0ff"/>
+        </svg>
     </div>
 
     <!-- Main Container for Isometric Scene -->
     <div class="scene">
-        
-        <!-- Background SVG Lines connecting nodes -->
-        <svg class="data-lines" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice">
-            <!-- Lines will be drawn via CSS or JS to match positions, but for simplicity we draw abstract glowing lines -->
-            <path class="line" d="M 250,250 L 500,450" />
-            <path class="line" d="M 500,200 L 500,450" />
-            <path class="line" d="M 800,250 L 500,450" />
-            <path class="line" d="M 200,600 L 500,450" />
-            <path class="line" d="M 500,700 L 500,450" />
-            <path class="line" d="M 800,600 L 500,450" />
-            <!-- Animated data packets along paths -->
-            <circle class="packet p1" cx="0" cy="0" r="5" />
-            <circle class="packet p2" cx="0" cy="0" r="5" />
-            <circle class="packet p3" cx="0" cy="0" r="5" />
-            <circle class="packet p4" cx="0" cy="0" r="5" />
-            <circle class="packet p5" cx="0" cy="0" r="5" />
-            <circle class="packet p6" cx="0" cy="0" r="5" />
-        </svg>
-
         <div class="isometric-world">
             
+            <!-- Isometric Data Lines (Rotated with the world) -->
+            <svg class="data-lines-iso" viewBox="0 0 1000 1000">
+                <defs>
+                    <filter id="cyan-glow">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <!-- Brain is at center (500,500) -->
+                <!-- P1: Traffic (Left Top) -> 200, 200 -->
+                <path class="line" d="M 200,200 L 500,200 L 500,500" />
+                <!-- P2: Security (Top Right) -> 800, 200 -->
+                <path class="line" d="M 800,200 L 500,200 L 500,500" />
+                <!-- P3: Surveillance (Right Bottom) -> 800, 800 -->
+                <path class="line" d="M 800,800 L 500,800 L 500,500" />
+                <!-- P4: Parking (Left Bottom) -> 200, 800 -->
+                <path class="line" d="M 200,800 L 500,800 L 500,500" />
+                <!-- P5: Utility (Bottom Center) -> 500, 800 -->
+                <!-- P6: Public Safety (Right Center) -> 800, 500 -->
+                
+                <!-- Animated Packets -->
+                <circle class="packet p-traffic" r="4" fill="#00f0ff" filter="url(#cyan-glow)"/>
+                <circle class="packet p-security" r="4" fill="#00f0ff" filter="url(#cyan-glow)"/>
+                <circle class="packet p-surveillance" r="4" fill="#00f0ff" filter="url(#cyan-glow)"/>
+                <circle class="packet p-parking" r="4" fill="#00f0ff" filter="url(#cyan-glow)"/>
+                <!-- We will manage packet positions in JS -->
+            </svg>
+
             <!-- CENTRAL BRAIN -->
-            <div class="platform central-brain" style="top: 45%; left: 45%;">
+            <div class="platform central-brain" style="top: 44%; left: 44%;">
                 <div class="brain-icon">
                     <svg viewBox="0 0 64 64" width="80" height="80">
                         <path d="M32 12 C18 12 8 22 8 36 C8 48 20 56 32 56 C44 56 56 48 56 36 C56 22 46 12 32 12 Z" fill="none" stroke="#00f0ff" stroke-width="3"/>
@@ -48,86 +69,127 @@
                 </div>
             </div>
 
-            <!-- 1. TRAFFIC MANAGEMENT -->
-            <div class="platform p-traffic" style="top: 15%; left: 10%;">
+            <!-- 1. TRAFFIC MANAGEMENT (Top Left) -->
+            <div class="platform p-traffic" style="top: 10%; left: 10%;">
                 <div class="label">TRAFFIC MANAGEMENT</div>
                 <div class="base road">
-                    <!-- Cars -->
+                    <div class="road-lines"></div>
                     <div class="car c1"></div>
                     <div class="car c2"></div>
-                    <div class="car c3"></div>
-                    <!-- Traffic Lights -->
                     <div class="traffic-light tl-left"></div>
                     <div class="traffic-light tl-right"></div>
                 </div>
             </div>
 
-            <!-- 2. SECURITY -->
-            <div class="platform p-security" style="top: 5%; left: 45%;">
-                <div class="label">SECURITY</div>
+            <!-- 2. SECURE AIRITY (Top Right) -->
+            <div class="platform p-security" style="top: 10%; left: 70%;">
+                <div class="label">SECURE AIRITY</div>
                 <div class="base park">
-                    <div class="building block b-small"></div>
-                    <div class="building block b-tall"></div>
                     <div class="tree t1"></div>
                     <div class="tree t2"></div>
-                    <div class="camera-pole"></div>
+                    <div class="tree t3"></div>
+                    <!-- Isometric building SVG -->
+                    <div class="iso-building b1">
+                        <div class="face right"></div>
+                        <div class="face left"></div>
+                        <div class="face top"></div>
+                    </div>
+                    <div class="iso-building b2">
+                        <div class="face right"></div>
+                        <div class="face left"></div>
+                        <div class="face top"></div>
+                    </div>
+                    <div class="camera-pole cp1"></div>
                 </div>
             </div>
 
-            <!-- 3. SECURITY SURVEILLANCE -->
-            <div class="platform p-surveillance" style="top: 15%; left: 75%;">
+            <!-- 3. SECURITY SURVEILLANCE (Far Right) -->
+            <div class="platform p-surveillance" style="top: 40%; left: 80%;">
                 <div class="label">SECURITY SURVEILLANCE</div>
                 <div class="base tech">
-                    <div class="server s1"></div>
-                    <div class="server s2"></div>
+                    <div class="hexa-grid"></div>
                     <div class="van"></div>
-                    <div class="camera-pole cp1"></div>
                     <div class="camera-pole cp2"></div>
+                    <div class="camera-pole cp3"></div>
                 </div>
             </div>
 
-            <!-- 4. PARKING SYSTEM -->
-            <div class="platform p-parking" style="top: 60%; left: 10%;">
+            <!-- 4. PARKING SYSTEM (Bottom Left) -->
+            <div class="platform p-parking" style="top: 70%; left: 10%;">
                 <div class="label">PARKING SYSTEM</div>
                 <div class="base grid">
-                    <div class="parking-spot ps1"><div class="wifi-icon"></div></div>
-                    <div class="parking-spot ps2"><div class="wifi-icon"></div></div>
-                    <div class="parking-spot ps3"><div class="wifi-icon"></div></div>
-                    <div class="parking-spot ps4"><div class="wifi-icon"></div></div>
+                    <div class="parking-lines"></div>
+                    <div class="wifi-icon w1"></div>
+                    <div class="wifi-icon w2"></div>
                     <div class="gate"></div>
                 </div>
             </div>
 
-            <!-- 5. UTILITY MONITORING -->
+            <!-- 5. UTILITY MONITORING (Bottom Center) -->
             <div class="platform p-utility" style="top: 75%; left: 45%;">
                 <div class="label">UTILITY MONITORING</div>
                 <div class="base city">
-                    <div class="building b-main"></div>
-                    <div class="building b-water"></div>
-                    <div class="building b-power"></div>
-                    <!-- Utility icons floating -->
-                    <div class="u-icon water"></div>
-                    <div class="u-icon power"></div>
-                    <div class="u-icon eco"></div>
+                    <div class="iso-building tall-1"><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
+                    <div class="iso-building tall-2"><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
+                    <div class="utility-icon water"></div>
+                    <div class="utility-icon power"></div>
                 </div>
             </div>
 
-            <!-- 6. PUBLIC SAFETY & ENVIRONMENTAL -->
-            <div class="platform p-safety" style="top: 60%; left: 75%;">
+            <!-- 6. PUBLIC SAFETY & ENVIRONMENTAL (Bottom Right) -->
+            <div class="platform p-safety" style="top: 70%; left: 70%;">
                 <div class="label">PUBLIC SAFETY<br>ENVIRONMENTAL</div>
                 <div class="base dark">
                     <div class="ambulance"></div>
-                    <div class="crowd">
-                        <div class="person"></div><div class="person"></div><div class="person"></div>
-                        <div class="person"></div><div class="person"></div><div class="person"></div>
-                    </div>
                     <div class="antenna a1"></div>
                     <div class="antenna a2"></div>
+                    <div class="crowd"></div>
                 </div>
             </div>
 
+            <!-- ROBOT WORKERS CONTAINER -->
+            <div id="robots-container"></div>
+            
         </div>
     </div>
+
+    <!-- Hidden SVG Template for AI Worker -->
+    <svg id="robot-template" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 200" style="display:none;">
+        <defs>
+            <linearGradient id="metal" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#a0aab5;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="neon-cyan" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#00f0ff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#0080ff;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+        <g class="robot-body-group">
+            <path d="M 30,70 Q 50,60 70,70 L 80,120 Q 50,140 20,120 Z" fill="url(#metal)" stroke="#333" stroke-width="2"/>
+            <path d="M 40,80 L 60,80 L 65,110 L 35,110 Z" fill="#1a1a24"/>
+            <circle cx="50" cy="95" r="8" fill="url(#neon-cyan)"/>
+            <path d="M 25,75 Q 10,90 15,120" fill="none" stroke="url(#metal)" stroke-width="8" stroke-linecap="round"/>
+            <circle cx="15" cy="120" r="5" fill="#444"/>
+            <path d="M 75,75 Q 90,90 85,120" fill="none" stroke="url(#metal)" stroke-width="8" stroke-linecap="round"/>
+            <circle cx="85" cy="120" r="5" fill="#444"/>
+            <g class="leg left-leg">
+                <path d="M 35,125 L 35,180" fill="none" stroke="url(#metal)" stroke-width="10" stroke-linecap="round"/>
+                <path d="M 25,180 L 45,180" fill="#333" stroke="#222" stroke-width="4" stroke-linecap="round"/>
+            </g>
+            <g class="leg right-leg">
+                <path d="M 65,125 L 65,180" fill="none" stroke="url(#metal)" stroke-width="10" stroke-linecap="round"/>
+                <path d="M 55,180 L 75,180" fill="#333" stroke="#222" stroke-width="4" stroke-linecap="round"/>
+            </g>
+            <path d="M 35,55 Q 50,20 65,55 L 60,65 L 40,65 Z" fill="url(#metal)" stroke="#333" stroke-width="2"/>
+            <rect x="42" y="45" width="16" height="6" rx="3" fill="#00f0ff"/>
+            <path d="M 30,45 A 25 25 0 0 1 70 45" fill="none" stroke="#222" stroke-width="4"/>
+            <circle cx="28" cy="48" r="7" fill="#111" stroke="#00f0ff" stroke-width="1"/>
+            <circle cx="72" cy="48" r="7" fill="#111" stroke="#00f0ff" stroke-width="1"/>
+            <path d="M 72,48 L 85,55" fill="none" stroke="#222" stroke-width="3"/>
+            <circle cx="85" cy="55" r="3" fill="#ff0055"/>
+        </g>
+    </svg>
 
     <script src="script.js"></script>
 </body>

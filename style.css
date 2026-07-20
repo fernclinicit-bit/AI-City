@@ -1,5 +1,5 @@
 :root {
-    --bg-light: #d6f1ff;
+    --bg-light: #e0f2fe;
     --text-dark: #0f2e4d;
     --base-dark: #2a3c5a;
     --base-side: #1e2c43;
@@ -7,8 +7,8 @@
     --base-tech: #17273d;
     --base-road: #566479;
     --cyan-glow: #00f0ff;
-    --building-glass: #9ce0ff;
-    --building-side: #6cb0db;
+    --building-glass: #cceeff;
+    --building-side: #99ccff;
 }
 
 * {
@@ -18,7 +18,7 @@
 }
 
 body {
-    background: linear-gradient(135deg, #e3f5ff, #badcf3);
+    background: var(--bg-light);
     font-family: 'Inter', sans-serif;
     overflow: hidden;
     height: 100vh;
@@ -26,230 +26,192 @@ body {
     color: var(--text-dark);
 }
 
-/* Background Clouds */
 .clouds {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    background: 
-        radial-gradient(circle at 15% 20%, #ffffff 0%, transparent 10%),
-        radial-gradient(circle at 20% 23%, #ffffff 0%, transparent 8%),
-        radial-gradient(circle at 10% 25%, #ffffff 0%, transparent 12%),
-        radial-gradient(circle at 80% 80%, #ffffff 0%, transparent 15%),
-        radial-gradient(circle at 75% 85%, #ffffff 0%, transparent 10%),
-        radial-gradient(circle at 85% 75%, #ffffff 0%, transparent 10%);
-    opacity: 0.5;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at 10% 80%, rgba(255,255,255,0.7) 0%, transparent 15%),
+                radial-gradient(circle at 85% 20%, rgba(255,255,255,0.7) 0%, transparent 15%),
+                radial-gradient(circle at 80% 85%, rgba(255,255,255,0.7) 0%, transparent 10%);
     z-index: 0;
 }
 
 .header {
     position: absolute;
-    top: 20px;
-    width: 100%;
-    text-align: center;
+    top: 20px; width: 100%;
+    text-align: center; z-index: 10;
+}
+.header h1 {
+    font-size: 2.2rem; font-weight: 800; color: #123e75;
+}
+.logo {
+    position: absolute;
+    top: 20px; right: 20px;
     z-index: 10;
 }
 
-.header h1 {
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: #123e75;
-}
-
-/* Isometric Scene Container */
 .scene {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     z-index: 1;
 }
 
-.data-lines {
+.isometric-world {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 1;
+    top: 50%; left: 50%;
+    width: 1000px; height: 1000px;
+    margin-left: -500px; margin-top: -500px;
+    transform: rotateX(60deg) rotateZ(-45deg);
+    transform-style: preserve-3d;
+}
+
+.data-lines-iso {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
     pointer-events: none;
+    transform: translateZ(-1px); /* Keep lines slightly below the bases */
 }
 .line {
     fill: none;
     stroke: var(--cyan-glow);
-    stroke-width: 2;
-    opacity: 0.5;
+    stroke-width: 3;
 }
 .packet {
-    fill: var(--cyan-glow);
-    filter: drop-shadow(0 0 5px var(--cyan-glow));
+    /* Glow handled by SVG filter */
 }
 
-.isometric-world {
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 1000px; height: 800px;
-    margin-left: -500px;
-    margin-top: -350px;
-    z-index: 2;
-}
-
-/* Base Platform Styles */
 .platform {
     position: absolute;
-    width: 160px;
-    height: 160px;
+    width: 200px; height: 200px;
     transform-style: preserve-3d;
 }
 
 .label {
     position: absolute;
-    top: -50px;
-    width: 200px;
-    left: -20px;
+    top: -40px; left: -50px; width: 300px;
     text-align: center;
-    font-weight: 700;
-    font-size: 0.8rem;
-    color: #123e75;
-    transform: none; /* Keep text readable */
-    z-index: 10;
+    font-weight: 800; font-size: 1rem; color: #123e75;
+    /* Un-rotate text so it faces camera directly */
+    transform: rotateZ(45deg) rotateX(-60deg) translateY(-20px);
+    pointer-events: none;
 }
 
-/* Isometric Transformation */
 .base {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    transform: rotateX(60deg) rotateZ(-45deg);
-    transform-style: preserve-3d;
+    width: 100%; height: 100%;
     background: var(--base-dark);
+    border-radius: 12px;
     box-shadow: 
         -5px 5px 0 var(--base-side),
         -10px 10px 0 var(--base-side),
-        -15px 15px 15px rgba(0,0,0,0.3);
-    border-radius: 8px;
-    border: 1px solid rgba(0,240,255,0.4);
+        -20px 20px 20px rgba(0,0,0,0.2);
+    border: 2px solid var(--cyan-glow);
+    transform-style: preserve-3d;
 }
 
-/* Top faces of bases */
 .base.road { background: var(--base-road); border-radius: 0; }
+.road-lines {
+    position: absolute;
+    top: 48%; width: 100%; height: 4%;
+    border-top: 4px dashed white;
+}
 .base.park { background: var(--base-green); }
 .base.tech { background: var(--base-tech); }
-.base.grid { background: var(--base-road); border: 2px dashed #999; }
+.base.grid { background: var(--base-road); border: 4px dashed #999; }
+.parking-lines {
+    position: absolute;
+    width: 90%; height: 90%;
+    top: 5%; left: 5%;
+    background: 
+        linear-gradient(white 2px, transparent 2px) 0 0 / 33% 33%,
+        linear-gradient(90deg, white 2px, transparent 2px) 0 0 / 33% 33%;
+}
 .base.city { background: var(--base-dark); }
 .base.dark { background: var(--base-tech); }
 
-/* Central Brain */
 .central-brain {
-    width: 120px; height: 120px;
-    z-index: 10;
+    width: 150px; height: 150px;
+    border-radius: 50%;
 }
-.central-brain .brain-icon {
+.brain-icon {
     position: absolute;
-    width: 120px; height: 120px;
+    width: 100%; height: 100%;
     background: white;
     border-radius: 50%;
     box-shadow: 0 0 30px var(--cyan-glow), inset 0 0 20px var(--cyan-glow);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: flex; justify-content: center; align-items: center;
+    transform: rotateZ(45deg) rotateX(-60deg) translateY(-10px);
     animation: pulse 2s infinite alternate;
 }
 @keyframes pulse {
-    0% { transform: scale(1); box-shadow: 0 0 20px var(--cyan-glow); }
-    100% { transform: scale(1.1); box-shadow: 0 0 40px var(--cyan-glow); }
+    0% { transform: rotateZ(45deg) rotateX(-60deg) translateY(-10px) scale(1); box-shadow: 0 0 20px var(--cyan-glow); }
+    100% { transform: rotateZ(45deg) rotateX(-60deg) translateY(-10px) scale(1.1); box-shadow: 0 0 40px var(--cyan-glow); }
 }
 
-/* --- 3D Objects on Bases --- */
-/* Objects need to be un-rotated slightly to stand up, or rotated X: -90deg */
-.building, .tree, .car, .camera-pole, .server, .van, .ambulance, .u-icon, .wifi-icon, .gate, .traffic-light, .person, .antenna {
-    position: absolute;
-    transform: rotateZ(45deg) rotateX(-90deg) translateY(-20px);
-    transform-origin: bottom center;
-}
-
-/* Buildings */
-.building {
-    background: var(--building-glass);
-    border: 2px solid var(--cyan-glow);
-    box-shadow: inset -5px -5px 10px rgba(0,0,0,0.2);
-}
-.b-small { width: 30px; height: 40px; bottom: 20%; left: 60%; }
-.b-tall { width: 40px; height: 80px; bottom: 50%; left: 30%; }
-.b-main { width: 50px; height: 100px; bottom: 40%; left: 40%; }
-.b-water { width: 30px; height: 50px; bottom: 20%; left: 20%; background: #4ca3ff; }
-.b-power { width: 30px; height: 60px; bottom: 60%; left: 70%; background: #ffcc00; border-color: #ffaa00; }
-
-/* Trees */
-.tree {
-    width: 15px; height: 25px;
-    background: #25a14d;
-    border-radius: 50% 50% 0 0;
-    bottom: 30%; left: 20%;
-}
-.t2 { bottom: 70%; left: 60%; transform: rotateZ(45deg) rotateX(-90deg) translateY(-20px) scale(0.8); }
-
-/* Vehicles */
+/* Base objects */
 .car {
-    width: 12px; height: 8px;
-    background: #3be486;
-    bottom: 50%; left: 10%;
-    border-radius: 2px;
+    position: absolute;
+    width: 20px; height: 12px;
+    background: #3be486; border-radius: 4px;
+    bottom: 55%; left: 10%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
-.c2 { background: #ffaa00; bottom: 50%; left: 50%; }
-.c3 { background: #00f0ff; bottom: 40%; left: 80%; }
+.c2 { background: #00f0ff; bottom: 35%; left: 60%; }
 
-.van {
-    width: 25px; height: 15px;
-    background: white;
-    border-top: 3px solid #ff9900;
-    bottom: 40%; left: 50%;
+.tree {
+    position: absolute;
+    width: 30px; height: 30px;
+    background: #147a33;
+    border-radius: 50%;
+    box-shadow: inset -5px -5px 10px rgba(0,0,0,0.3);
+    /* Make trees stand up like spheres */
+    transform: translateZ(15px);
 }
-.ambulance {
-    width: 25px; height: 15px;
-    background: white;
-    border-top: 3px solid #ff0055;
-    bottom: 50%; left: 50%;
-}
+.t1 { bottom: 20%; left: 20%; }
+.t2 { bottom: 70%; left: 70%; transform: translateZ(15px) scale(0.8); }
+.t3 { bottom: 50%; left: 20%; transform: translateZ(15px) scale(0.6); }
 
-/* Tech / Security */
-.server {
-    width: 20px; height: 40px;
-    background: #00f0ff;
-    box-shadow: 0 0 10px #00f0ff;
-    bottom: 30%; left: 30%;
-}
-.s2 { bottom: 60%; left: 60%; }
-
-.camera-pole, .antenna {
-    width: 2px; height: 30px;
-    background: #999;
-    bottom: 80%; left: 20%;
-}
-.camera-pole::after {
-    content: ''; position: absolute;
-    top: 0; left: 0; width: 8px; height: 4px;
-    background: #333;
-}
-.antenna::after {
-    content: ''; position: absolute;
-    top: -5px; left: -5px; width: 12px; height: 12px;
-    border-radius: 50%; border: 2px solid var(--cyan-glow);
-}
-
-.person {
-    width: 4px; height: 10px; background: #fff;
-    margin: 2px; display: inline-block;
-    position: relative;
-    transform: none; /* Already inside .crowd which is transformed */
-}
-.crowd {
+/* Isometric CSS Buildings */
+.iso-building {
     position: absolute;
     width: 40px; height: 40px;
-    bottom: 20%; left: 20%;
-    transform: rotateZ(45deg) rotateX(-90deg) translateY(-10px);
+    transform-style: preserve-3d;
+}
+.iso-building .face {
+    position: absolute;
+    border: 1px solid var(--cyan-glow);
+}
+.iso-building .top {
+    width: 40px; height: 40px;
+    background: var(--building-glass);
+    transform: translateZ(60px);
+}
+.iso-building .left {
+    width: 40px; height: 60px;
+    background: var(--building-side);
+    transform: rotateX(-90deg) translateZ(20px) translateY(20px);
+}
+.iso-building .right {
+    width: 40px; height: 60px;
+    background: #4a90e2;
+    transform: rotateY(90deg) translateZ(20px) translateY(-20px) rotateZ(-90deg);
 }
 
-/* Road lines */
-.road::after {
-    content: ''; position: absolute;
-    top: 48%; left: 0; width: 100%; height: 4px;
-    border-top: 2px dashed #fff;
+.b1 { bottom: 30%; left: 60%; }
+.b2 { bottom: 50%; left: 30%; transform: scale3d(0.8, 0.8, 0.5); }
+.tall-1 { bottom: 40%; left: 40%; transform: scale3d(1.2, 1.2, 2); }
+.tall-2 { bottom: 20%; left: 20%; transform: scale3d(0.8, 0.8, 1.5); }
+
+/* AI Robots */
+.ai-worker {
+    position: absolute;
+    width: 30px; height: 60px;
+    transform-style: preserve-3d;
+    transform-origin: bottom center;
+    /* Must un-rotate Z and X to stand up on the isometric plane */
+    /* rotateZ(45) cancels the world rotateZ(-45), rotateX(-90) stands it up vertically */
+    transform: rotateZ(45deg) rotateX(-90deg) translateY(-30px);
 }
+.walking .left-leg { animation: walk-l 1s linear infinite; transform-origin: 35px 125px; }
+.walking .right-leg { animation: walk-r 1s linear infinite; transform-origin: 65px 125px; }
+@keyframes walk-l { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(20deg); } 75% { transform: rotate(-20deg); } }
+@keyframes walk-r { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(-20deg); } 75% { transform: rotate(20deg); } }

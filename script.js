@@ -1,74 +1,113 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // We want to dynamically draw the lines from each platform to the central brain
-    const brain = document.querySelector('.central-brain');
-    const platforms = document.querySelectorAll('.platform:not(.central-brain)');
-    const lines = document.querySelectorAll('.data-lines .line');
-    const packets = document.querySelectorAll('.data-lines .packet');
+    // 1. Orthogonal Isometric Data Lines Animation
+    const packets = document.querySelectorAll('.data-lines-iso .packet');
+    
+    // Each packet follows a path from its starting platform coordinate to the center (500,500)
+    // The paths are defined in the SVG. We'll use getPointAtLength.
+    const lines = document.querySelectorAll('.data-lines-iso .line');
+    
+    lines.forEach((line, index) => {
+        if (!packets[index]) return;
+        const packet = packets[index];
+        const length = line.getTotalLength();
+        let progress = Math.random() * length;
+        const speed = 2 + Math.random() * 2;
 
-    function updateLines() {
-        const brainRect = brain.getBoundingClientRect();
-        const brainX = brainRect.left + brainRect.width / 2;
-        const brainY = brainRect.top + brainRect.height / 2;
-
-        platforms.forEach((p, index) => {
-            if(index >= lines.length) return;
-
-            const pRect = p.getBoundingClientRect();
-            // Start line from the center bottom of the platform
-            const pX = pRect.left + pRect.width / 2;
-            const pY = pRect.top + pRect.height / 2;
-
-            // Draw line
-            const path = `M ${pX},${pY} L ${brainX},${brainY}`;
-            lines[index].setAttribute('d', path);
-
-            // Animate packet
-            animatePacket(packets[index], pX, pY, brainX, brainY);
-        });
-    }
-
-    function animatePacket(packet, startX, startY, endX, endY) {
-        // Simple linear interpolation animation using requestAnimationFrame
-        let progress = Math.random(); // Start at random point
-        const speed = 0.005 + (Math.random() * 0.005); // Random speed
-
-        function step() {
+        function animatePacket() {
             progress += speed;
-            if (progress >= 1) progress = 0;
-
-            const currentX = startX + (endX - startX) * progress;
-            const currentY = startY + (endY - startY) * progress;
-
-            packet.setAttribute('cx', currentX);
-            packet.setAttribute('cy', currentY);
-
-            requestAnimationFrame(step);
+            if (progress > length) progress = 0;
+            
+            const point = line.getPointAtLength(progress);
+            packet.setAttribute('cx', point.x);
+            packet.setAttribute('cy', point.y);
+            
+            requestAnimationFrame(animatePacket);
         }
-        step();
-    }
-
-    // Small delay to ensure CSS positions are applied before calculating rects
-    setTimeout(updateLines, 100);
-
-    window.addEventListener('resize', () => {
-        // When window resizes, lines should recalculate (though isometric container is fixed 1000x800, 
-        // bounding client rect changes based on center positioning).
-        location.reload(); // simple brute force for resize on static infographic
+        animatePacket();
     });
 
-    // Simple car animation on the road
+    // 2. Traffic Car Animation
     const cars = document.querySelectorAll('.car');
     cars.forEach(car => {
-        let x = parseInt(getComputedStyle(car).left);
+        let y = parseInt(getComputedStyle(car).bottom) || 50;
         let direction = 1;
         setInterval(() => {
-            x += direction * 2;
-            if (x > 140 || x < 10) {
-                direction *= -1; // reverse
-                // Swap lanes visually by changing top (which is left in rotated space)
-                car.style.bottom = direction === 1 ? '50%' : '30%';
+            y += direction * 2;
+            if (y > 90 || y < 10) {
+                direction *= -1;
+                car.style.left = direction === 1 ? '10%' : '30%'; // swap lanes
             }
-            car.style.left = `${x}px`;
+            car.style.bottom = `${y}%`;
         }, 50);
     });
+
+    // 3. Robot Workers Animation (Isometric)
+    const robotsContainer = document.getElementById('robots-container');
+    const template = document.getElementById('robot-template');
+    const numRobots = 5;
+    
+    for (let i = 0; i < numRobots; i++) {
+        spawnRobot();
+    }
+
+    function spawnRobot() {
+        const svgClone = template.cloneNode(true);
+        svgClone.removeAttribute('id');
+        svgClone.style.display = 'block';
+
+        const bot = document.createElement('div');
+        bot.classList.add('ai-worker', 'walking');
+        bot.appendChild(svgClone);
+
+        // Randomly place near center brain
+        let currentX = 400 + Math.random() * 200;
+        let currentY = 400 + Math.random() * 200;
+        bot.style.left = `${currentX}px`;
+        bot.style.top = `${currentY}px`;
+
+        robotsContainer.appendChild(bot);
+
+        // Movement logic
+        let targetX = currentX;
+        let targetY = currentY;
+
+        function pickNewTarget() {
+            // Walk to a random platform area (between 200 and 800)
+            targetX = 200 + Math.random() * 600;
+            targetY = 200 + Math.random() * 600;
+        }
+        pickNewTarget();
+
+        function moveRobot() {
+            const dx = targetX - currentX;
+            const dy = targetY - currentY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            
+            if (dist < 5) {
+                // Arrived at target, wait then pick new
+                bot.classList.remove('walking');
+                setTimeout(() => {
+                    pickNewTarget();
+                    bot.classList.add('walking');
+                    requestAnimationFrame(moveRobot);
+                }, 2000 + Math.random() * 3000);
+            } else {
+                // Move towards target
+                const speed = 1;
+                currentX += (dx/dist) * speed;
+                currentY += (dy/dist) * speed;
+                
+                bot.style.left = `${currentX}px`;
+                bot.style.top = `${currentY}px`;
+                
+                // Flip SVG depending on X direction
+                const scaleX = dx < 0 ? -1 : 1;
+                // Keep the base transform but add the flip
+                bot.style.transform = `rotateZ(45deg) rotateX(-90deg) translateY(-30px) scaleX(${scaleX})`;
+                
+                requestAnimationFrame(moveRobot);
+            }
+        }
+        moveRobot();
+    }
 });
