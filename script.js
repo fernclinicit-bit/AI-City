@@ -1,100 +1,74 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Parallax effect
-    const wrapper = document.querySelector('.parallax-wrapper');
-    const layers = document.querySelectorAll('.layer');
+    // We want to dynamically draw the lines from each platform to the central brain
+    const brain = document.querySelector('.central-brain');
+    const platforms = document.querySelectorAll('.platform:not(.central-brain)');
+    const lines = document.querySelectorAll('.data-lines .line');
+    const packets = document.querySelectorAll('.data-lines .packet');
 
-    document.addEventListener('mousemove', (e) => {
-        const x = (e.clientX - window.innerWidth / 2);
-        const y = (e.clientY - window.innerHeight / 2);
+    function updateLines() {
+        const brainRect = brain.getBoundingClientRect();
+        const brainX = brainRect.left + brainRect.width / 2;
+        const brainY = brainRect.top + brainRect.height / 2;
 
-        layers.forEach(layer => {
-            const speed = parseFloat(layer.getAttribute('data-speed'));
-            const xOffset = -(x * speed);
-            const yOffset = -(y * speed);
-            layer.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+        platforms.forEach((p, index) => {
+            if(index >= lines.length) return;
+
+            const pRect = p.getBoundingClientRect();
+            // Start line from the center bottom of the platform
+            const pX = pRect.left + pRect.width / 2;
+            const pY = pRect.top + pRect.height / 2;
+
+            // Draw line
+            const path = `M ${pX},${pY} L ${brainX},${brainY}`;
+            lines[index].setAttribute('d', path);
+
+            // Animate packet
+            animatePacket(packets[index], pX, pY, brainX, brainY);
         });
+    }
+
+    function animatePacket(packet, startX, startY, endX, endY) {
+        // Simple linear interpolation animation using requestAnimationFrame
+        let progress = Math.random(); // Start at random point
+        const speed = 0.005 + (Math.random() * 0.005); // Random speed
+
+        function step() {
+            progress += speed;
+            if (progress >= 1) progress = 0;
+
+            const currentX = startX + (endX - startX) * progress;
+            const currentY = startY + (endY - startY) * progress;
+
+            packet.setAttribute('cx', currentX);
+            packet.setAttribute('cy', currentY);
+
+            requestAnimationFrame(step);
+        }
+        step();
+    }
+
+    // Small delay to ensure CSS positions are applied before calculating rects
+    setTimeout(updateLines, 100);
+
+    window.addEventListener('resize', () => {
+        // When window resizes, lines should recalculate (though isometric container is fixed 1000x800, 
+        // bounding client rect changes based on center positioning).
+        location.reload(); // simple brute force for resize on static infographic
     });
 
-    // AI Worker Logic
-    const workersContainer = document.getElementById('workers-container');
-    const robotTemplate = document.getElementById('robot-template');
-    const unitCountSpan = document.getElementById('unit-count');
-    
-    const numWorkers = 8;
-    const workers = [];
-
-    // Initialize Workers
-    for (let i = 0; i < numWorkers; i++) {
-        spawnWorker(i);
-    }
-    
-    function spawnWorker(index) {
-        // Clone the SVG template
-        const svgClone = robotTemplate.cloneNode(true);
-        svgClone.removeAttribute('id');
-        svgClone.style.display = 'block';
-        
-        const workerDiv = document.createElement('div');
-        workerDiv.classList.add('ai-worker', 'walking');
-        workerDiv.appendChild(svgClone);
-        
-        // Random starting position
-        const startX = Math.random() * window.innerWidth;
-        workerDiv.style.left = `${startX}px`;
-        
-        // Give them a slightly random scale for depth perception
-        const scale = 0.6 + (Math.random() * 0.4);
-        workerDiv.style.transform = `scale(${scale})`;
-        workerDiv.dataset.scale = scale;
-        
-        workersContainer.appendChild(workerDiv);
-        
-        const workerData = {
-            element: workerDiv,
-            x: startX,
-            speed: (Math.random() * 1.5 + 0.5) * (Math.random() > 0.5 ? 1 : -1), // Random direction
-            state: 'walking', // 'walking' or 'working'
-            timer: 0
-        };
-        
-        workers.push(workerData);
-        unitCountSpan.innerText = workers.length;
-    }
-
-    // Animation Loop
-    function updateWorkers() {
-        workers.forEach(w => {
-            if (w.state === 'walking') {
-                w.x += w.speed;
-                w.element.style.left = `${w.x}px`;
-                
-                // Keep the scale intact while flipping if going left
-                const flip = w.speed < 0 ? -1 : 1;
-                w.element.style.transform = `scaleX(${flip * w.dataset.scale}) scaleY(${w.dataset.scale})`;
-                
-                // Screen wrapping
-                if (w.x > window.innerWidth + 100) w.x = -100;
-                if (w.x < -100) w.x = window.innerWidth + 100;
-
-                // Randomly stop to work
-                if (Math.random() < 0.005) {
-                    w.state = 'working';
-                    w.timer = Math.floor(Math.random() * 150) + 50; // 50-200 frames of work
-                    w.element.classList.remove('walking');
-                }
-            } else if (w.state === 'working') {
-                w.timer--;
-                if (w.timer <= 0) {
-                    w.state = 'walking';
-                    w.element.classList.add('walking');
-                    // Maybe change direction
-                    if (Math.random() > 0.5) w.speed *= -1;
-                }
+    // Simple car animation on the road
+    const cars = document.querySelectorAll('.car');
+    cars.forEach(car => {
+        let x = parseInt(getComputedStyle(car).left);
+        let direction = 1;
+        setInterval(() => {
+            x += direction * 2;
+            if (x > 140 || x < 10) {
+                direction *= -1; // reverse
+                // Swap lanes visually by changing top (which is left in rotated space)
+                car.style.bottom = direction === 1 ? '50%' : '30%';
             }
-        });
-        
-        requestAnimationFrame(updateWorkers);
-    }
-    
-    updateWorkers();
+            car.style.left = `${x}px`;
+        }, 50);
+    });
 });
