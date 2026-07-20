@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated AI City Projection</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Blurred Background Cityscape -->
+    <div class="bg-city"></div>
+    <div class="bg-overlay"></div>
+
+    <!-- 3D Perspective Scene -->
+    <div class="scene" id="scene">
+        <!-- Phone Device Frame -->
+        <div class="phone">
+            <!-- Screen Content (Holographic City) -->
+            <div class="screen">
+                <div class="grid-base"></div>
+                
+                <!-- 3D City Container -->
+                <div class="city-container">
+                    <!-- Central Tower -->
+                    <div class="building central-tower" data-height="12">
+                        <div class="face front"></div>
+                        <div class="face back"></div>
+                        <div class="face right"></div>
+                        <div class="face left"></div>
+                        <div class="face top">
+                            <div class="spire"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Other Buildings -->
+                    <div class="building b1" data-height="5"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
+                    <div class="building b2" data-height="7"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
+                    <div class="building b3" data-height="4"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
+                    <div class="building b4" data-height="6"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
+                    <div class="building b5" data-height="3"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
+                    <div class="building b6" data-height="8"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
+                    <div class="building b7" data-height="4"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
+                    
+                    <!-- Data Streams / Circuit Lines -->
+                    <div class="data-streams"></div>
+                </div>
+                
+                <!-- Screen Reflections/Gloss -->
+                <div class="screen-gloss"></div>
+            </div>
+            <!-- Phone Edge / Bezel -->
+            <div class="phone-edge top"></div>
+            <div class="phone-edge bottom"></div>
+            <div class="phone-edge left"></div>
+            <div class="phone-edge right"></div>
+        </div>
+        
+        <!-- Hand representation (stylized silhouette) -->
+        <div class="hand-silhouette"></div>
+    </div>
+
+    <!-- UI Overlay for context -->
+    <div class="ui-overlay">
+        <h1>AI CITY <span>PROJECTION</span></h1>
+        <p>Holographic Neural Interface Active</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
