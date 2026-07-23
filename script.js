@@ -1,155 +1,59 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize Building Faces
-    const buildings = document.querySelectorAll('.building');
-    const unit = 20; // Matches var(--unit) in CSS
+const departments = {
+  content:{icon:"🎬",en:"CONTENT STUDIO",title:"สตูดิโอคอนเทนต์",desc:"สร้างโพสต์ บทความ วิดีโอ และภาพสำหรับทุกช่องทาง",tasks:12,agents:["มิวส์ — นักเขียนคอนเทนต์","เฟรม — ผู้กำกับวิดีโอ","พิกเซล — นักออกแบบภาพ"]},
+  marketing:{icon:"📣",en:"MARKETING LAB",title:"แผนกการตลาด",desc:"วางแผนแคมเปญ วิเคราะห์กลุ่มเป้าหมาย และขยายการเข้าถึง",tasks:9,agents:["สปาร์ก — นักวางแผนแคมเปญ","เทรนด์ — นักวิเคราะห์ตลาด","รีช — ผู้เชี่ยวชาญโฆษณา"]},
+  automation:{icon:"⚙️",en:"AUTOMATION WORKS",title:"โรงงานระบบอัตโนมัติ",desc:"เชื่อมระบบและสร้างเวิร์กโฟลว์ให้ธุรกิจทำงานได้ตลอด 24 ชั่วโมง",tasks:7,agents:["โฟลว์ — วิศวกรเวิร์กโฟลว์","ลิงก์ — นักเชื่อมระบบ","บอตตี้ — ผู้ช่วยอัตโนมัติ"]},
+  sales:{icon:"🛍️",en:"SALES GUILD",title:"สมาคมฝ่ายขาย",desc:"ค้นหาลูกค้า ติดตามโอกาส และจัดทำข้อเสนอที่เหมาะกับแต่ละราย",tasks:15,agents:["ลีด — นักหาลูกค้า","โคลส — ผู้ช่วยปิดการขาย","ดีล — ผู้จัดทำข้อเสนอ"]},
+  data:{icon:"📊",en:"DATA LAB",title:"ศูนย์ข้อมูล",desc:"เปลี่ยนข้อมูลธุรกิจเป็นรายงาน แนวโน้ม และคำแนะนำที่นำไปใช้ได้",tasks:5,agents:["อินไซต์ — นักวิเคราะห์ข้อมูล","ชาร์ต — ผู้สร้างรายงาน","ฟอร์แคสต์ — นักพยากรณ์"]},
+  care:{icon:"💬",en:"CUSTOMER CARE",title:"ศูนย์ดูแลลูกค้า",desc:"ตอบคำถาม คัดแยกปัญหา และดูแลลูกค้าทุกช่องทางอย่างใส่ใจ",tasks:18,agents:["แคร์ — เจ้าหน้าที่บริการ","โซลฟ์ — ผู้แก้ปัญหา","วอยซ์ — ผู้ดูแลเสียงลูกค้า"]},
+  core:{icon:"✨",en:"AI COMMAND CENTER",title:"ศูนย์บัญชาการ AI",desc:"ภาพรวมการทำงานและการประสานงานของทุกทีมในเมือง",tasks:66,agents:["ออเคสตรา — ผู้ประสานงานกลาง","การ์ด — ผู้ตรวจสอบคุณภาพ","ไพล็อต — ผู้จัดลำดับงาน"]}
+};
 
-    buildings.forEach(b => {
-        // Skip central tower since it's hardcoded for special look
-        if (b.classList.contains('central-tower')) return;
+const panel=document.querySelector("#panel"),scrim=document.querySelector("#scrim");
+function openDepartment(key){
+  const d=departments[key];
+  panel.querySelector("#panelIcon").textContent=d.icon;
+  panel.querySelector("#panelEn").textContent=d.en;
+  panel.querySelector("#panelTitle").textContent=d.title;
+  panel.querySelector("#panelDesc").textContent=d.desc;
+  panel.querySelector("#taskCount").textContent=d.tasks;
+  panel.querySelector("#agentCount").textContent=d.agents.length;
+  panel.querySelector("#agents").innerHTML=d.agents.map((a,i)=>`<div class="agent"><span class="agent-avatar">${["🤖","🧠","✨"][i]}</span><span><b>${a.split(" — ")[0]}</b><small>${a.split(" — ")[1]}</small></span><i class="online"></i></div>`).join("");
+  panel.classList.add("open");scrim.classList.add("show");panel.setAttribute("aria-hidden","false");
+}
+function closePanel(){panel.classList.remove("open");scrim.classList.remove("show");panel.setAttribute("aria-hidden","true")}
+document.querySelectorAll(".department").forEach(b=>b.addEventListener("click",()=>openDepartment(b.dataset.dept)));
+document.querySelector("#closePanel").addEventListener("click",closePanel);
+scrim.addEventListener("click",closePanel);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closePanel()});
 
-        const h = parseInt(b.getAttribute('data-height') || 5);
-        const heightPx = h * unit;
-        // Randomize width and depth slightly for variety
-        const w = (Math.floor(Math.random() * 2) + 1) * unit; 
-        const d = (Math.floor(Math.random() * 2) + 1) * unit;
+const routes=[
+  [[50,50],[38,38],[25,23]],[[50,50],[61,37],[68,22]],[[50,50],[34,54],[15,49]],
+  [[50,50],[68,55],[86,48]],[[50,50],[42,64],[30,76]],[[50,50],[58,66],[72,76]],
+  [[25,23],[42,35],[50,50],[68,55],[72,76]]
+];
+const shirts=["#ef7654","#3f8ca6","#e6b84f","#6d9d64","#8c74aa","#e79245"];
+function spawnWalker(index){
+  const el=document.createElement("div");el.className="walker";
+  el.style.setProperty("--shirt",shirts[index%shirts.length]);
+  el.innerHTML='<i class="head"></i><i class="body"></i><i class="legs"></i>';
+  document.querySelector("#walkers").appendChild(el);
+  let route=routes[index%routes.length],point=Math.floor(Math.random()*route.length);
+  const move=()=>{
+    const next=(point+1)%route.length,[x,y]=route[next],[cx]=route[point];
+    const duration=3200+Math.random()*2600;
+    el.classList.toggle("left",x<cx);el.classList.remove("paused");
+    el.style.transitionDuration=`${duration}ms`;el.style.left=`${x}%`;el.style.top=`${y}%`;point=next;
+    setTimeout(()=>{el.classList.add("paused");setTimeout(move,500+Math.random()*1500)},duration);
+  };
+  const [x,y]=route[point];el.style.left=`${x}%`;el.style.top=`${y}%`;setTimeout(move,index*380);
+}
+for(let i=0;i<14;i++)spawnWalker(i);
 
-        const front = b.querySelector('.front');
-        const back = b.querySelector('.back');
-        const right = b.querySelector('.right');
-        const left = b.querySelector('.left');
-        const top = b.querySelector('.top');
-
-        if (front && back && right && left && top) {
-            // Set dimensions
-            [front, back].forEach(face => {
-                face.style.width = `${w}px`;
-                face.style.height = `${heightPx}px`;
-            });
-            [right, left].forEach(face => {
-                face.style.width = `${d}px`;
-                face.style.height = `${heightPx}px`;
-            });
-            top.style.width = `${w}px`;
-            top.style.height = `${d}px`;
-
-            // Position faces in 3D
-            front.style.transform = `rotateY(0deg) translateZ(${d/2}px)`;
-            back.style.transform = `rotateY(180deg) translateZ(${d/2}px)`;
-            right.style.transform = `rotateY(90deg) translateZ(${w/2}px)`;
-            left.style.transform = `rotateY(-90deg) translateZ(${w/2}px)`;
-            top.style.transform = `rotateX(90deg) translateZ(${heightPx/2}px)`;
-
-            // Adjust building center base
-            // To make the building stand up from the grid, we elevate it by height/2
-            b.style.transform += ` translateZ(${heightPx/2}px)`;
-            
-            // Randomly add a glow effect to some buildings
-            if (Math.random() > 0.5) {
-                top.style.background = 'rgba(0, 240, 255, 0.6)';
-                top.style.boxShadow = '0 0 15px rgba(0, 240, 255, 0.8)';
-            }
-        }
-    });
-
-    // Create Data Streams
-    const streamsContainer = document.querySelector('.data-streams');
-    function createStream() {
-        const stream = document.createElement('div');
-        stream.classList.add('stream');
-        
-        const isHorizontal = Math.random() > 0.5;
-        
-        if (isHorizontal) {
-            stream.style.width = '60px';
-            stream.style.height = '2px';
-            stream.style.top = `${(Math.floor(Math.random() * 20) - 10) * 40}px`; // align to grid
-            stream.style.left = '0';
-            stream.style.animation = `stream-x ${Math.random() * 2 + 2}s linear forwards`;
-        } else {
-            stream.style.width = '2px';
-            stream.style.height = '60px';
-            stream.style.left = `${(Math.floor(Math.random() * 10) - 5) * 40}px`;
-            stream.style.top = '0';
-            stream.style.animation = `stream-y ${Math.random() * 2 + 2}s linear forwards`;
-        }
-
-        streamsContainer.appendChild(stream);
-
-        // Remove after animation completes
-        setTimeout(() => {
-            stream.remove();
-        }, 4000);
-    }
-
-    // Generate streams periodically
-    setInterval(createStream, 400);
-
-    // Create Glowing Spots on Grid Intersections
-    for(let i = 0; i < 5; i++) {
-        const spot = document.createElement('div');
-        spot.classList.add('glow-spot');
-        spot.style.left = `${(Math.floor(Math.random() * 10) - 5) * 40 - 20}px`;
-        spot.style.top = `${(Math.floor(Math.random() * 20) - 10) * 40 - 20}px`;
-        spot.style.animationDelay = `${Math.random() * 2}s`;
-        streamsContainer.appendChild(spot);
-    }
-
-    // --- AI Workers Logic ---
-    const cityContainer = document.querySelector('.city-container');
-    const numWorkers = 20;
-    
-    for (let i = 0; i < numWorkers; i++) {
-        createWorker(i + 1);
-    }
-
-    function createWorker(index) {
-        const worker = document.createElement('div');
-        worker.classList.add('worker');
-        
-        // Add ID label
-        const idString = index < 10 ? `0${index}` : index;
-        worker.setAttribute('data-id', `AI-${idString}`);
-        
-        // Start position on the grid
-        let currentX = (Math.floor(Math.random() * 10) - 5) * 40;
-        let currentY = (Math.floor(Math.random() * 10) - 5) * 40;
-        
-        worker.style.left = `${currentX}px`;
-        worker.style.top = `${currentY}px`;
-        
-        cityContainer.appendChild(worker);
-        
-        // Movement loop
-        setInterval(() => {
-            // Move by 1 grid cell (40px) randomly in X or Y
-            if (Math.random() > 0.5) {
-                currentX += (Math.random() > 0.5 ? 40 : -40);
-            } else {
-                currentY += (Math.random() > 0.5 ? 40 : -40);
-            }
-            
-            // Keep within bounds roughly
-            currentX = Math.max(-200, Math.min(200, currentX));
-            currentY = Math.max(-300, Math.min(300, currentY));
-            
-            worker.style.left = `${currentX}px`;
-            worker.style.top = `${currentY}px`;
-        }, 3000 + Math.random() * 2000); // Move every 3-5 seconds
-    }
-
-    // Parallax Interaction
-    const phone = document.querySelector('.phone');
-    document.addEventListener('mousemove', (e) => {
-        const xAxis = (window.innerWidth / 2 - e.pageX) / 50;
-        const yAxis = (window.innerHeight / 2 - e.pageY) / 50;
-        
-        // Base phone tilt is rotateX(60deg) rotateZ(-30deg)
-        // Add mouse offset
-        phone.style.transform = `rotateX(${60 + yAxis}deg) rotateZ(${-30 + xAxis}deg) translateZ(0px)`;
-    });
-
-    // Reset rotation on mouse leave
-    document.addEventListener('mouseleave', () => {
-        phone.style.transform = `rotateX(60deg) rotateZ(-30deg) translateZ(0px)`;
-    });
+let zoom=1;const mapImage=document.querySelector(".map>img");
+function applyZoom(){mapImage.style.transform=`scale(${zoom})`}
+document.querySelector("#zoomIn").addEventListener("click",()=>{zoom=Math.min(1.35,zoom+.1);applyZoom()});
+document.querySelector("#zoomOut").addEventListener("click",()=>{zoom=Math.max(1,zoom-.1);applyZoom()});
+document.querySelector("#startTask").addEventListener("click",()=>{
+  const toast=document.querySelector("#toast");toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),2200);
 });
+setInterval(()=>{document.querySelector("#clock").textContent=new Date().toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"})},1000);

@@ -1,71 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated AI City Projection</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#163d35">
+  <title>AI City — เมืองทีมงานอัจฉริยะ</title>
+  <meta name="description" content="ศูนย์รวมทีม AI แยกตามแผนกในรูปแบบเมืองเกมแบบโต้ตอบ">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Mitr:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Blurred Background Cityscape -->
-    <div class="bg-city"></div>
-    <div class="bg-overlay"></div>
+  <main class="app">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="AI City หน้าหลัก">
+        <span class="brand-mark">AI</span>
+        <span><b>AI CITY</b><small>เมืองที่ทีม AI ทำงานให้คุณ</small></span>
+      </a>
+      <div class="city-status">
+        <span class="live-dot"></span>
+        <span><b id="activeCount">18</b> AI กำลังทำงาน</span>
+        <span class="clock" id="clock">08:34</span>
+      </div>
+      <button class="profile" type="button" aria-label="เปิดโปรไฟล์">ฟ</button>
+    </header>
 
-    <!-- 3D Perspective Scene -->
-    <div class="scene" id="scene">
-        <!-- Phone Device Frame -->
-        <div class="phone">
-            <!-- Screen Content (Holographic City) -->
-            <div class="screen">
-                <div class="grid-base"></div>
-                
-                <!-- 3D City Container -->
-                <div class="city-container">
-                    <!-- Central Tower -->
-                    <div class="building central-tower" data-height="12">
-                        <div class="face front"></div>
-                        <div class="face back"></div>
-                        <div class="face right"></div>
-                        <div class="face left"></div>
-                        <div class="face top">
-                            <div class="spire"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Other Buildings -->
-                    <div class="building b1" data-height="5"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                    <div class="building b2" data-height="7"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                    <div class="building b3" data-height="4"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                    <div class="building b4" data-height="6"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                    <div class="building b5" data-height="3"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                    <div class="building b6" data-height="8"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                    <div class="building b7" data-height="4"><div class="face front"></div><div class="face back"></div><div class="face right"></div><div class="face left"></div><div class="face top"></div></div>
-                    
-                    <!-- Data Streams / Circuit Lines -->
-                    <div class="data-streams"></div>
-                </div>
-                
-                <!-- Screen Reflections/Gloss -->
-                <div class="screen-gloss"></div>
-            </div>
-            <!-- Phone Edge / Bezel -->
-            <div class="phone-edge top"></div>
-            <div class="phone-edge bottom"></div>
-            <div class="phone-edge left"></div>
-            <div class="phone-edge right"></div>
+    <section class="map-shell" aria-label="แผนที่เมือง AI">
+      <div class="map" id="map">
+        <img src="assets/ai-city.png" alt="เมืองสำนักงาน AI แบบไอโซเมตริก" draggable="false">
+        <div class="warm-overlay"></div>
+        <div id="walkers" aria-hidden="true"></div>
+
+        <button class="department content" data-dept="content" style="--x:25%;--y:23%">
+          <span class="pin">🎬</span><span class="dept-label"><b>สตูดิโอคอนเทนต์</b><small>CONTENT STUDIO</small></span>
+        </button>
+        <button class="department marketing" data-dept="marketing" style="--x:68%;--y:22%">
+          <span class="pin">📣</span><span class="dept-label"><b>การตลาด</b><small>MARKETING LAB</small></span>
+        </button>
+        <button class="department automation" data-dept="automation" style="--x:15%;--y:49%">
+          <span class="pin">⚙️</span><span class="dept-label"><b>ระบบอัตโนมัติ</b><small>AUTOMATION WORKS</small></span>
+        </button>
+        <button class="department sales" data-dept="sales" style="--x:86%;--y:48%">
+          <span class="pin">🛍️</span><span class="dept-label"><b>ฝ่ายขาย</b><small>SALES GUILD</small></span>
+        </button>
+        <button class="department data" data-dept="data" style="--x:30%;--y:76%">
+          <span class="pin">📊</span><span class="dept-label"><b>ศูนย์ข้อมูล</b><small>DATA LAB</small></span>
+        </button>
+        <button class="department care" data-dept="care" style="--x:72%;--y:76%">
+          <span class="pin">💬</span><span class="dept-label"><b>ดูแลลูกค้า</b><small>CUSTOMER CARE</small></span>
+        </button>
+        <button class="department core" data-dept="core" style="--x:50%;--y:48%">
+          <span class="core-ring"></span><span class="dept-label"><b>ศูนย์บัญชาการ AI</b><small>AI COMMAND CENTER</small></span>
+        </button>
+
+        <div class="map-tip">คลิกอาคารเพื่อดูทีมงาน</div>
+        <div class="zoom-controls" aria-label="ควบคุมแผนที่">
+          <button id="zoomIn" type="button" aria-label="ขยาย">+</button>
+          <button id="zoomOut" type="button" aria-label="ย่อ">−</button>
         </div>
-        
-        <!-- Hand representation (stylized silhouette) -->
-        <div class="hand-silhouette"></div>
-    </div>
+      </div>
+    </section>
 
-    <!-- UI Overlay for context -->
-    <div class="ui-overlay">
-        <h1>AI CITY <span>PROJECTION</span></h1>
-        <p>Holographic Neural Interface Active</p>
-    </div>
+    <nav class="bottom-dock" aria-label="เมนูหลัก">
+      <button class="active"><span>🏡</span>เมืองของฉัน</button>
+      <button><span>📋</span>งานทั้งหมด<i>7</i></button>
+      <button><span>🤖</span>ทีม AI</button>
+      <button><span>📈</span>รายงาน</button>
+    </nav>
+  </main>
 
-    <script src="script.js"></script>
+  <aside class="panel" id="panel" aria-hidden="true">
+    <button class="close" id="closePanel" type="button" aria-label="ปิด">×</button>
+    <div class="panel-icon" id="panelIcon">🎬</div>
+    <p class="eyebrow" id="panelEn">CONTENT STUDIO</p>
+    <h2 id="panelTitle">สตูดิโอคอนเทนต์</h2>
+    <p id="panelDesc">สร้างโพสต์ บทความ วิดีโอ และภาพสำหรับทุกช่องทาง</p>
+    <div class="stats">
+      <div><b id="taskCount">12</b><span>งานวันนี้</span></div>
+      <div><b id="agentCount">3</b><span>AI ประจำการ</span></div>
+    </div>
+    <h3>ทีม AI ประจำแผนก</h3>
+    <div class="agents" id="agents"></div>
+    <button class="primary" id="startTask" type="button">+ มอบหมายงานใหม่</button>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <div class="toast" id="toast" role="status">ส่งงานให้ทีม AI แล้ว ✓</div>
+
+  <script src="script.js"></script>
 </body>
 </html>
