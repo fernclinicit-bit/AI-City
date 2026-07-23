@@ -72,6 +72,7 @@
 
   <aside class="panel" id="panel" aria-hidden="true">
     <button class="close" id="closePanel" type="button" aria-label="ปิด">×</button>
+    <button class="edit-toggle" id="editPanel" type="button">✎ แก้ไข</button>
     <div class="panel-icon" id="panelIcon">🎬</div>
     <p class="eyebrow" id="panelEn">CONTENT STUDIO</p>
     <h2 id="panelTitle">สตูดิโอคอนเทนต์</h2>
@@ -82,6 +83,14 @@
     </div>
     <h3>ทีม AI ประจำแผนก</h3>
     <div class="agents" id="agents"></div>
+    <label class="link-editor" id="linkEditor">ลิงก์ปลายทาง
+      <input id="panelLink" type="url" placeholder="https://example.com">
+    </label>
+    <div class="edit-actions" id="editActions">
+      <button class="reset-button" id="resetPanel" type="button">คืนค่าเดิม</button>
+      <button class="save-button" id="savePanel" type="button">บันทึกการแก้ไข</button>
+    </div>
+    <a class="open-app" id="openApp" href="#" target="_blank" rel="noopener noreferrer">เปิดระบบ ↗</a>
     <button class="primary" id="startTask" type="button">+ มอบหมายงานใหม่</button>
   </aside>
   <div class="scrim" id="scrim"></div>

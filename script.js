@@ -9,25 +9,95 @@ const departments = {
 };
 
 const panel=document.querySelector("#panel"),scrim=document.querySelector("#scrim");
+const storageKey="ai-city-departments-v1";
+departments.sales.url="https://omnichannel-chat-app.onrender.com/";
+departments.data.url="https://it-monthly-dashboard.onrender.com/";
+departments.care.url="https://ios-device-monitor-46w9.onrender.com/";
+Object.keys(departments).forEach(key=>{if(typeof departments[key].url==="undefined")departments[key].url=""});
+const defaults=JSON.parse(JSON.stringify(departments));
+let currentDepartment="";
+try{
+  const saved=JSON.parse(localStorage.getItem(storageKey)||"{}");
+  Object.keys(saved).forEach(key=>{if(departments[key])Object.assign(departments[key],saved[key])});
+}catch(error){console.warn("Saved department data could not be loaded",error)}
+
+function departmentButton(key){return document.querySelector(`.department[data-dept="${key}"]`)}
+function syncMapLabel(key){
+  const button=departmentButton(key);
+  if(button)button.querySelector(".dept-label b").textContent=departments[key].title;
+}
+Object.keys(departments).forEach(key=>syncMapLabel(key));
+
 function openDepartment(key){
+  currentDepartment=key;
   const d=departments[key];
+  const button=departmentButton(key);
+  if(typeof d.url==="undefined")d.url=button?.dataset.url||"";
   panel.querySelector("#panelIcon").textContent=d.icon;
   panel.querySelector("#panelEn").textContent=d.en;
   panel.querySelector("#panelTitle").textContent=d.title;
   panel.querySelector("#panelDesc").textContent=d.desc;
   panel.querySelector("#taskCount").textContent=d.tasks;
   panel.querySelector("#agentCount").textContent=d.agents.length;
-  panel.querySelector("#agents").innerHTML=d.agents.map((a,i)=>`<div class="agent"><span class="agent-avatar">${["🤖","🧠","✨"][i]}</span><span><b>${a.split(" — ")[0]}</b><small>${a.split(" — ")[1]}</small></span><i class="online"></i></div>`).join("");
+  panel.querySelector("#agents").innerHTML=d.agents.map((a,i)=>`<div class="agent"><span class="agent-avatar">${["🤖","🧠","✨"][i]}</span><span><b>${a.split(" — ")[0]}</b><small>${a.split(" — ")[1]||""}</small></span><i class="online"></i></div>`).join("");
+  panel.querySelector("#panelLink").value=d.url||"";
+  const openApp=panel.querySelector("#openApp");
+  openApp.href=d.url||"#";
+  openApp.classList.toggle("hidden",!d.url);
+  setEditing(false);
   panel.classList.add("open");scrim.classList.add("show");panel.setAttribute("aria-hidden","false");
 }
-function closePanel(){panel.classList.remove("open");scrim.classList.remove("show");panel.setAttribute("aria-hidden","true")}
-document.querySelectorAll(".department").forEach(b=>b.addEventListener("click",()=>{
-  if(b.dataset.url){
-    window.open(b.dataset.url,"_blank","noopener,noreferrer");
-    return;
+function setEditing(enabled){
+  panel.classList.toggle("editing",enabled);
+  ["panelEn","panelTitle","panelDesc","taskCount"].forEach(id=>{
+    panel.querySelector(`#${id}`).contentEditable=enabled?"true":"false";
+  });
+  panel.querySelectorAll(".agent b,.agent small").forEach(el=>el.contentEditable=enabled?"true":"false");
+  panel.querySelector("#editPanel").textContent=enabled?"✕ ยกเลิก":"✎ แก้ไข";
+}
+function saveDepartment(){
+  if(!currentDepartment)return;
+  const d=departments[currentDepartment];
+  d.en=panel.querySelector("#panelEn").textContent.trim();
+  d.title=panel.querySelector("#panelTitle").textContent.trim();
+  d.desc=panel.querySelector("#panelDesc").textContent.trim();
+  d.tasks=Math.max(0,Number.parseInt(panel.querySelector("#taskCount").textContent,10)||0);
+  d.url=panel.querySelector("#panelLink").value.trim();
+  d.agents=[...panel.querySelectorAll(".agent")].map(agent=>{
+    const name=agent.querySelector("b").textContent.trim();
+    const role=agent.querySelector("small").textContent.trim();
+    return `${name} — ${role}`;
+  });
+  const button=departmentButton(currentDepartment);
+  if(button){
+    if(d.url)button.dataset.url=d.url;
+    else delete button.dataset.url;
   }
-  openDepartment(b.dataset.dept);
-}));
+  localStorage.setItem(storageKey,JSON.stringify(departments));
+  syncMapLabel(currentDepartment);
+  openDepartment(currentDepartment);
+  showToast("บันทึกการแก้ไขแล้ว ✓");
+}
+function resetDepartment(){
+  if(!currentDepartment)return;
+  departments[currentDepartment]=JSON.parse(JSON.stringify(defaults[currentDepartment]));
+  const saved=JSON.parse(localStorage.getItem(storageKey)||"{}");
+  delete saved[currentDepartment];
+  localStorage.setItem(storageKey,JSON.stringify(saved));
+  syncMapLabel(currentDepartment);
+  openDepartment(currentDepartment);
+  showToast("คืนค่าเริ่มต้นแล้ว");
+}
+function showToast(message){
+  const toast=document.querySelector("#toast");
+  toast.textContent=message;toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"),2200);
+}
+function closePanel(){setEditing(false);panel.classList.remove("open");scrim.classList.remove("show");panel.setAttribute("aria-hidden","true")}
+document.querySelector("#editPanel").addEventListener("click",()=>setEditing(!panel.classList.contains("editing")));
+document.querySelector("#savePanel").addEventListener("click",saveDepartment);
+document.querySelector("#resetPanel").addEventListener("click",resetDepartment);
+document.querySelectorAll(".department").forEach(b=>b.addEventListener("click",()=>openDepartment(b.dataset.dept)));
 document.querySelector("#closePanel").addEventListener("click",closePanel);
 scrim.addEventListener("click",closePanel);
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closePanel()});
@@ -60,6 +130,6 @@ function applyZoom(){mapImage.style.transform=`scale(${zoom})`}
 document.querySelector("#zoomIn").addEventListener("click",()=>{zoom=Math.min(1.35,zoom+.1);applyZoom()});
 document.querySelector("#zoomOut").addEventListener("click",()=>{zoom=Math.max(1,zoom-.1);applyZoom()});
 document.querySelector("#startTask").addEventListener("click",()=>{
-  const toast=document.querySelector("#toast");toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),2200);
+  showToast("ส่งงานให้ทีม AI แล้ว ✓");
 });
 setInterval(()=>{document.querySelector("#clock").textContent=new Date().toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"})},1000);
