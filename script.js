@@ -33,7 +33,7 @@ const routes=[
 ];
 function spawnWalker(index){
   const el=document.createElement("div");el.className="walker";
-  const spritePositions=["0%","20%","40%","60%","80%","100%"];
+  const spritePositions=["0%","14.28%","28.57%","42.85%","57.14%","71.42%","85.71%","100%"];
   el.style.setProperty("--sprite-x",spritePositions[index%spritePositions.length]);
   document.querySelector("#walkers").appendChild(el);
   let route=routes[index%routes.length],point=Math.floor(Math.random()*route.length);
@@ -46,7 +46,7 @@ function spawnWalker(index){
   };
   const [x,y]=route[point];el.style.left=`${x}%`;el.style.top=`${y}%`;setTimeout(move,index*380);
 }
-for(let i=0;i<12;i++)spawnWalker(i);
+for(let i=0;i<16;i++)spawnWalker(i);
 
 let zoom=1;const world=document.querySelector("#world");
 function applyZoom(){world.style.transform=`translate(-50%,-50%) scale(${zoom})`}
