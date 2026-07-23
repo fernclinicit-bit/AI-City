@@ -31,7 +31,7 @@ const routes=[
   [[50,50],[68,55],[86,48]],[[50,50],[42,64],[30,76]],[[50,50],[58,66],[72,76]],
   [[25,23],[42,35],[50,50],[68,55],[72,76]]
 ];
-const shirts=["#ef7654","#3f8ca6","#e6b84f","#6d9d64","#8c74aa","#e79245"];
+const shirts=["#ff7657","#37d5e8","#ffc84a","#65d987","#b995ff","#ff9e45"];
 function spawnWalker(index){
   const el=document.createElement("div");el.className="walker";
   el.style.setProperty("--shirt",shirts[index%shirts.length]);
