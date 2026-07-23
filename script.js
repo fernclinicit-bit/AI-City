@@ -10,6 +10,10 @@ const departments = {
 
 const panel=document.querySelector("#panel"),scrim=document.querySelector("#scrim");
 const storageKey="ai-city-departments-v1";
+departments.care.icon="📱";
+departments.care.en="DEVICE MONITOR";
+departments.care.title="ตรวจสอบอุปกรณ์";
+departments.care.desc="ตรวจสอบสถานะอุปกรณ์ iOS การเชื่อมต่อ และความพร้อมใช้งานจากศูนย์กลาง";
 departments.sales.url="https://omnichannel-chat-app.onrender.com/";
 departments.data.url="https://it-monthly-dashboard.onrender.com/";
 departments.care.url="https://ios-device-monitor-46w9.onrender.com/";
@@ -19,6 +23,12 @@ let currentDepartment="";
 try{
   const saved=JSON.parse(localStorage.getItem(storageKey)||"{}");
   Object.keys(saved).forEach(key=>{if(departments[key])Object.assign(departments[key],saved[key])});
+  if(saved.care?.title==="ศูนย์ดูแลลูกค้า"){
+    departments.care.icon="📱";
+    departments.care.en="DEVICE MONITOR";
+    departments.care.title="ตรวจสอบอุปกรณ์";
+    departments.care.desc="ตรวจสอบสถานะอุปกรณ์ iOS การเชื่อมต่อ และความพร้อมใช้งานจากศูนย์กลาง";
+  }
 }catch(error){console.warn("Saved department data could not be loaded",error)}
 
 function departmentButton(key){return document.querySelector(`.department[data-dept="${key}"]`)}
