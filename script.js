@@ -123,7 +123,50 @@ function closePanel(){setEditing(false);panel.classList.remove("open");scrim.cla
 document.querySelector("#editPanel").addEventListener("click",()=>setEditing(!panel.classList.contains("editing")));
 document.querySelector("#savePanel").addEventListener("click",saveDepartment);
 document.querySelector("#resetPanel").addEventListener("click",resetDepartment);
-document.querySelectorAll(".department").forEach(b=>b.addEventListener("click",()=>openDepartment(b.dataset.dept)));
+const positionStorageKey="ai-city-icon-positions-v1";
+let savedPositions={};
+try{savedPositions=JSON.parse(localStorage.getItem(positionStorageKey)||"{}")}catch(error){savedPositions={}}
+document.querySelectorAll(".department").forEach(button=>{
+  const saved=savedPositions[button.dataset.dept];
+  if(saved){
+    button.style.setProperty("--x",`${saved.x}%`);
+    button.style.setProperty("--y",`${saved.y}%`);
+  }
+  let dragStart=null;
+  button.addEventListener("pointerdown",event=>{
+    if(event.button!==undefined&&event.button!==0)return;
+    dragStart={x:event.clientX,y:event.clientY,moved:false};
+    button.setPointerCapture(event.pointerId);
+  });
+  button.addEventListener("pointermove",event=>{
+    if(!dragStart)return;
+    const distance=Math.hypot(event.clientX-dragStart.x,event.clientY-dragStart.y);
+    if(distance<5&&!dragStart.moved)return;
+    dragStart.moved=true;
+    button.classList.add("dragging");
+    const rect=document.querySelector("#map").getBoundingClientRect();
+    const x=Math.min(96,Math.max(4,((event.clientX-rect.left)/rect.width)*100));
+    const y=Math.min(90,Math.max(8,((event.clientY-rect.top)/rect.height)*100));
+    button.style.setProperty("--x",`${x}%`);
+    button.style.setProperty("--y",`${y}%`);
+    savedPositions[button.dataset.dept]={x:Number(x.toFixed(2)),y:Number(y.toFixed(2))};
+  });
+  button.addEventListener("pointerup",()=>{
+    if(!dragStart)return;
+    if(dragStart.moved){
+      localStorage.setItem(positionStorageKey,JSON.stringify(savedPositions));
+      button.dataset.justDragged="true";
+      setTimeout(()=>delete button.dataset.justDragged,0);
+    }
+    button.classList.remove("dragging");
+    dragStart=null;
+  });
+  button.addEventListener("pointercancel",()=>{button.classList.remove("dragging");dragStart=null});
+  button.addEventListener("click",event=>{
+    if(button.dataset.justDragged==="true"){event.preventDefault();return}
+    openDepartment(button.dataset.dept);
+  });
+});
 function openSystemView(view){
   currentDepartment="";
   setEditing(false);
