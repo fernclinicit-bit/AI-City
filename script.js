@@ -125,11 +125,11 @@ function spawnWalker(index){
 }
 for(let i=0;i<14;i++)spawnWalker(i);
 
-let zoom=.9;const mapImage=document.querySelector(".map>img");
+let zoom=.6;const mapImage=document.querySelector(".map>img");
 function applyZoom(){mapImage.style.transform=`scale(${zoom})`}
 applyZoom();
 document.querySelector("#zoomIn").addEventListener("click",()=>{zoom=Math.min(1.35,zoom+.1);applyZoom()});
-document.querySelector("#zoomOut").addEventListener("click",()=>{zoom=Math.max(.6,zoom-.1);applyZoom()});
+document.querySelector("#zoomOut").addEventListener("click",()=>{zoom=Math.max(.3,zoom-.1);applyZoom()});
 document.querySelector("#startTask").addEventListener("click",()=>{
   showToast("ส่งงานให้ทีม AI แล้ว ✓");
 });
