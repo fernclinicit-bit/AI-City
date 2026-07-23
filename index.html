@@ -63,10 +63,10 @@
     </section>
 
     <nav class="bottom-dock" aria-label="เมนูหลัก">
-      <button class="active"><span>🏡</span>เมืองของฉัน</button>
-      <button><span>📋</span>งานทั้งหมด<i>7</i></button>
-      <button><span>🤖</span>ทีม AI</button>
-      <button><span>📈</span>รายงาน</button>
+      <button class="active" data-view="city"><span>🏡</span>เมืองของฉัน</button>
+      <button data-view="tasks"><span>📋</span>งานทั้งหมด<i>7</i></button>
+      <button data-view="team"><span>🤖</span>ทีม AI</button>
+      <button data-view="reports"><span>📈</span>รายงาน</button>
     </nav>
   </main>
 
@@ -83,6 +83,7 @@
     </div>
     <h3>ทีม AI ประจำแผนก</h3>
     <div class="agents" id="agents"></div>
+    <div class="system-content" id="systemContent"></div>
     <label class="link-editor" id="linkEditor">ลิงก์ปลายทาง
       <input id="panelLink" type="url" placeholder="https://example.com">
     </label>

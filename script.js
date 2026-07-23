@@ -40,6 +40,8 @@ Object.keys(departments).forEach(key=>syncMapLabel(key));
 
 function openDepartment(key){
   currentDepartment=key;
+  panel.classList.remove("system-view");
+  panel.querySelector("#systemContent").innerHTML="";
   const d=departments[key];
   const button=departmentButton(key);
   if(typeof d.url==="undefined")d.url=button?.dataset.url||"";
@@ -108,6 +110,45 @@ document.querySelector("#editPanel").addEventListener("click",()=>setEditing(!pa
 document.querySelector("#savePanel").addEventListener("click",saveDepartment);
 document.querySelector("#resetPanel").addEventListener("click",resetDepartment);
 document.querySelectorAll(".department").forEach(b=>b.addEventListener("click",()=>openDepartment(b.dataset.dept)));
+function openSystemView(view){
+  currentDepartment="";
+  setEditing(false);
+  panel.classList.add("system-view","open");
+  scrim.classList.add("show");
+  panel.setAttribute("aria-hidden","false");
+  const content=panel.querySelector("#systemContent");
+  if(view==="tasks"){
+    panel.querySelector("#panelIcon").textContent="📋";
+    panel.querySelector("#panelEn").textContent="TASK CENTER";
+    panel.querySelector("#panelTitle").textContent="งานทั้งหมด";
+    panel.querySelector("#panelDesc").textContent="ติดตามงานจากทุกแผนกในเมือง";
+    content.innerHTML=`<div class="summary-list">
+      <article class="summary-card"><header><b>สรุปรายงานยอดขายประจำวัน</b><span class="status-pill">กำลังทำ</span></header><small>ฝ่ายขาย · อัปเดต 5 นาทีที่แล้ว</small><div class="progress-bar"><i style="width:78%"></i></div></article>
+      <article class="summary-card"><header><b>ตรวจสอบอุปกรณ์ iOS</b><span class="status-pill">เสร็จแล้ว</span></header><small>ตรวจสอบอุปกรณ์ · 24 เครื่องออนไลน์</small><div class="progress-bar"><i style="width:100%"></i></div></article>
+      <article class="summary-card"><header><b>วิเคราะห์ข้อมูลรายเดือน</b><span class="status-pill waiting">รอตรวจ</span></header><small>ศูนย์ข้อมูล · ส่งผลลัพธ์แล้ว</small><div class="progress-bar"><i style="width:92%"></i></div></article>
+      <article class="summary-card"><header><b>วางแผนคอนเทนต์สัปดาห์หน้า</b><span class="status-pill">กำลังทำ</span></header><small>สตูดิโอคอนเทนต์ · 4 จาก 6 ชิ้น</small><div class="progress-bar"><i style="width:66%"></i></div></article>
+    </div>`;
+  }else if(view==="team"){
+    panel.querySelector("#panelIcon").textContent="🤖";
+    panel.querySelector("#panelEn").textContent="AI WORKFORCE";
+    panel.querySelector("#panelTitle").textContent="ทีม AI ทั้งหมด";
+    panel.querySelector("#panelDesc").textContent="สมาชิก AI ที่ปฏิบัติงานในทุกแผนก";
+    content.innerHTML=`<div class="summary-list">${Object.values(departments).map(d=>`<article class="summary-card"><header><b>${d.icon} ${d.title}</b><span class="status-pill">${d.agents.length} AI</span></header><small>${d.agents.map(a=>a.split(" — ")[0]).join(" · ")}</small></article>`).join("")}</div>`;
+  }else{
+    const totalTasks=Object.values(departments).reduce((sum,d)=>sum+d.tasks,0);
+    panel.querySelector("#panelIcon").textContent="📈";
+    panel.querySelector("#panelEn").textContent="CITY ANALYTICS";
+    panel.querySelector("#panelTitle").textContent="รายงานเมือง AI";
+    panel.querySelector("#panelDesc").textContent="ภาพรวมประสิทธิภาพการทำงานวันนี้";
+    content.innerHTML=`<div class="report-grid"><div class="report-card"><b>${totalTasks}</b><small>งานทั้งหมด</small></div><div class="report-card"><b>94%</b><small>สำเร็จตามเวลา</small></div><div class="report-card"><b>18</b><small>AI ออนไลน์</small></div><div class="report-card"><b>6.4 ชม.</b><small>เวลาที่ประหยัด</small></div></div><div class="summary-card"><header><b>ประสิทธิภาพรวม</b><span class="status-pill">ดีเยี่ยม</span></header><small>เพิ่มขึ้น 12% จากเมื่อวาน</small><div class="progress-bar"><i style="width:94%"></i></div></div>`;
+  }
+}
+document.querySelectorAll(".bottom-dock button").forEach(button=>button.addEventListener("click",()=>{
+  document.querySelectorAll(".bottom-dock button").forEach(item=>item.classList.remove("active"));
+  button.classList.add("active");
+  if(button.dataset.view==="city")closePanel();
+  else openSystemView(button.dataset.view);
+}));
 document.querySelector("#closePanel").addEventListener("click",closePanel);
 scrim.addEventListener("click",closePanel);
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closePanel()});
