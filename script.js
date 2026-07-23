@@ -37,6 +37,18 @@ function syncMapLabel(key){
   if(button)button.querySelector(".dept-label b").textContent=departments[key].title;
 }
 Object.keys(departments).forEach(key=>syncMapLabel(key));
+function linkedApps(){
+  return Object.entries(departments)
+    .filter(([,department])=>department.url)
+    .map(([key,department])=>({key,...department}));
+}
+function syncAppIndicators(){
+  document.querySelector("#appCount").textContent=linkedApps().length;
+  document.querySelectorAll(".department").forEach(button=>{
+    button.classList.toggle("has-app",Boolean(departments[button.dataset.dept]?.url));
+  });
+}
+syncAppIndicators();
 
 function openDepartment(key){
   currentDepartment=key;
@@ -87,6 +99,7 @@ function saveDepartment(){
   }
   localStorage.setItem(storageKey,JSON.stringify(departments));
   syncMapLabel(currentDepartment);
+  syncAppIndicators();
   openDepartment(currentDepartment);
   showToast("บันทึกการแก้ไขแล้ว ✓");
 }
@@ -97,6 +110,7 @@ function resetDepartment(){
   delete saved[currentDepartment];
   localStorage.setItem(storageKey,JSON.stringify(saved));
   syncMapLabel(currentDepartment);
+  syncAppIndicators();
   openDepartment(currentDepartment);
   showToast("คืนค่าเริ่มต้นแล้ว");
 }
@@ -134,6 +148,18 @@ function openSystemView(view){
     panel.querySelector("#panelTitle").textContent="ทีม AI ทั้งหมด";
     panel.querySelector("#panelDesc").textContent="สมาชิก AI ที่ปฏิบัติงานในทุกแผนก";
     content.innerHTML=`<div class="summary-list">${Object.values(departments).map(d=>`<article class="summary-card"><header><b>${d.icon} ${d.title}</b><span class="status-pill">${d.agents.length} AI</span></header><small>${d.agents.map(a=>a.split(" — ")[0]).join(" · ")}</small></article>`).join("")}</div>`;
+  }else if(view==="apps"){
+    const apps=linkedApps();
+    panel.querySelector("#panelIcon").textContent="▦";
+    panel.querySelector("#panelEn").textContent="APP LAUNCHER";
+    panel.querySelector("#panelTitle").textContent="App ทั้งหมด";
+    panel.querySelector("#panelDesc").textContent=`เปิดใช้งานระบบทั้งหมดจากจุดเดียว · ${apps.length} App พร้อมใช้งาน`;
+    content.innerHTML=`<div class="app-launcher">${apps.map(app=>`
+      <a class="app-card" href="${app.url}" target="_blank" rel="noopener noreferrer">
+        <span class="app-card-icon">${app.icon}</span>
+        <span><b>${app.title}</b><small>${app.en}</small></span>
+        <i>เปิด ↗</i>
+      </a>`).join("")}</div>`;
   }else{
     const totalTasks=Object.values(departments).reduce((sum,d)=>sum+d.tasks,0);
     panel.querySelector("#panelIcon").textContent="📈";
@@ -162,6 +188,7 @@ const shirts=["#ff7657","#37d5e8","#ffc84a","#65d987","#b995ff","#ff9e45"];
 function spawnWalker(index){
   const el=document.createElement("div");el.className="walker";
   el.style.setProperty("--shirt",shirts[index%shirts.length]);
+  el.style.setProperty("--sprite-x",["0%","33.33%","66.66%","100%"][index%4]);
   el.innerHTML='<i class="head"></i><i class="body"></i><i class="legs"></i>';
   document.querySelector("#walkers").appendChild(el);
   let route=routes[index%routes.length],point=Math.floor(Math.random()*route.length);
