@@ -21,7 +21,13 @@ function openDepartment(key){
   panel.classList.add("open");scrim.classList.add("show");panel.setAttribute("aria-hidden","false");
 }
 function closePanel(){panel.classList.remove("open");scrim.classList.remove("show");panel.setAttribute("aria-hidden","true")}
-document.querySelectorAll(".department").forEach(b=>b.addEventListener("click",()=>openDepartment(b.dataset.dept)));
+document.querySelectorAll(".department").forEach(b=>b.addEventListener("click",()=>{
+  if(b.dataset.url){
+    window.open(b.dataset.url,"_blank","noopener,noreferrer");
+    return;
+  }
+  openDepartment(b.dataset.dept);
+}));
 document.querySelector("#closePanel").addEventListener("click",closePanel);
 scrim.addEventListener("click",closePanel);
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closePanel()});
