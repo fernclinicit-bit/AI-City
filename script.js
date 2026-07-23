@@ -96,15 +96,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- AI Workers Logic ---
     const cityContainer = document.querySelector('.city-container');
-    const numWorkers = 15;
+    const numWorkers = 20;
     
     for (let i = 0; i < numWorkers; i++) {
-        createWorker();
+        createWorker(i + 1);
     }
 
-    function createWorker() {
+    function createWorker(index) {
         const worker = document.createElement('div');
         worker.classList.add('worker');
+        
+        // Add ID label
+        const idString = index < 10 ? `0${index}` : index;
+        worker.setAttribute('data-id', `AI-${idString}`);
         
         // Start position on the grid
         let currentX = (Math.floor(Math.random() * 10) - 5) * 40;
