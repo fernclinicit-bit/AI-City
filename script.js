@@ -49,8 +49,8 @@ function spawnWalker(index){
 }
 for(let i=0;i<14;i++)spawnWalker(i);
 
-let zoom=1;const world=document.querySelector("#world");
-function applyZoom(){world.style.transform=`translate(-50%,-50%) scale(${zoom})`}
+let zoom=1;const mapImage=document.querySelector(".map>img");
+function applyZoom(){mapImage.style.transform=`scale(${zoom})`}
 document.querySelector("#zoomIn").addEventListener("click",()=>{zoom=Math.min(1.35,zoom+.1);applyZoom()});
 document.querySelector("#zoomOut").addEventListener("click",()=>{zoom=Math.max(1,zoom-.1);applyZoom()});
 document.querySelector("#startTask").addEventListener("click",()=>{
