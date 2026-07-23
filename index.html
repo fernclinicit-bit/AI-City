@@ -30,6 +30,19 @@
       <div class="map" id="map">
         <img src="assets/ai-city.png" alt="เมืองสำนักงาน AI แบบไอโซเมตริก" draggable="false">
         <div class="warm-overlay"></div>
+        <div class="office-animation" aria-hidden="true">
+          <i class="office-light light-1"></i>
+          <i class="office-light light-2"></i>
+          <i class="office-light light-3"></i>
+          <i class="office-light light-4"></i>
+          <i class="data-stream stream-1"></i>
+          <i class="data-stream stream-2"></i>
+          <i class="data-stream stream-3"></i>
+          <span class="office-drone drone-1">▰</span>
+          <span class="office-drone drone-2">▰</span>
+          <span class="work-signal signal-1">•••</span>
+          <span class="work-signal signal-2">✓</span>
+        </div>
         <div id="walkers" aria-hidden="true"></div>
 
         <button class="department content" data-dept="content" style="--x:25%;--y:23%">
@@ -54,7 +67,7 @@
           <span class="core-ring"></span><span class="dept-label"><b>ศูนย์บัญชาการ AI</b><small>AI COMMAND CENTER</small></span>
         </button>
 
-        <div class="map-tip">คลิกอาคารเพื่อดูทีมงาน</div>
+        <div class="map-tip">คลิกอาคารเพื่อดูทีมงานและเปิด App</div>
         <div class="zoom-controls" aria-label="ควบคุมแผนที่">
           <button id="zoomIn" type="button" aria-label="ขยาย">+</button>
           <button id="zoomOut" type="button" aria-label="ย่อ">−</button>
@@ -66,6 +79,7 @@
       <button class="active" data-view="city"><span>🏡</span>เมืองของฉัน</button>
       <button data-view="tasks"><span>📋</span>งานทั้งหมด<i>7</i></button>
       <button data-view="team"><span>🤖</span>ทีม AI</button>
+      <button data-view="apps"><span>▦</span>App ทั้งหมด<i id="appCount">3</i></button>
       <button data-view="reports"><span>📈</span>รายงาน</button>
     </nav>
   </main>
