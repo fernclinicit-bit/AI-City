@@ -176,7 +176,7 @@ function spawnWalker(index){
 }
 for(let i=0;i<14;i++)spawnWalker(i);
 
-let zoom=.2;const mapImage=document.querySelector(".map>img");
+let zoom=1;const mapImage=document.querySelector(".map>img");
 function applyZoom(){mapImage.style.transform=`scale(${zoom})`}
 applyZoom();
 document.querySelector("#zoomIn").addEventListener("click",()=>{zoom=Math.min(1.35,zoom+.05);applyZoom()});
