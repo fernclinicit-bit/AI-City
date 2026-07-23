@@ -31,11 +31,10 @@ const routes=[
   [[50,50],[68,55],[86,48]],[[50,50],[42,64],[30,76]],[[50,50],[58,66],[72,76]],
   [[25,23],[42,35],[50,50],[68,55],[72,76]]
 ];
-const shirts=["#ef7654","#3f8ca6","#e6b84f","#6d9d64","#8c74aa","#e79245"];
 function spawnWalker(index){
   const el=document.createElement("div");el.className="walker";
-  el.style.setProperty("--shirt",shirts[index%shirts.length]);
-  el.innerHTML='<i class="head"></i><i class="body"></i><i class="legs"></i>';
+  const spritePositions=["0%","20%","40%","60%","80%","100%"];
+  el.style.setProperty("--sprite-x",spritePositions[index%spritePositions.length]);
   document.querySelector("#walkers").appendChild(el);
   let route=routes[index%routes.length],point=Math.floor(Math.random()*route.length);
   const move=()=>{
@@ -47,7 +46,7 @@ function spawnWalker(index){
   };
   const [x,y]=route[point];el.style.left=`${x}%`;el.style.top=`${y}%`;setTimeout(move,index*380);
 }
-for(let i=0;i<14;i++)spawnWalker(i);
+for(let i=0;i<12;i++)spawnWalker(i);
 
 let zoom=1;const world=document.querySelector("#world");
 function applyZoom(){world.style.transform=`translate(-50%,-50%) scale(${zoom})`}
